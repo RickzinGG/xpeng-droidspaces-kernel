@@ -28,19 +28,23 @@ cd kernel
 
 mkdir -p out
 
+msg "CLEANING SOURCE"
+
+make O=out mrproper
+
 msg "GENERATING DEFCONFIG"
 
 make O=out $DEFCONFIG
 
 msg "MERGING DROIDSPACES CONFIG"
 
+ARCH=arm64 \
 scripts/kconfig/merge_config.sh \
     -m \
     out/.config \
     ../config/droidspaces.fragment
 
 make O=out olddefconfig
-
 msg "BUILDING KERNEL"
 
 make -j$(nproc --all) \
