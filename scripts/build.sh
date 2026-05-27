@@ -36,13 +36,9 @@ msg "GENERATING DEFCONFIG"
 
 make O=out $DEFCONFIG
 
-msg "MERGING DROIDSPACES CONFIG"
+msg "APPLYING DROIDSPACES CONFIG"
 
-ARCH=arm64 \
-KCONFIG_CONFIG=out/.config \
-scripts/kconfig/merge_config.sh \
-    out/.config \
-    ../config/droidspaces.fragment
+cat ../config/droidspaces.fragment >> out/.config
 
 make O=out olddefconfig
 msg "BUILDING KERNEL"
