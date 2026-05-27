@@ -39,8 +39,8 @@ make O=out $DEFCONFIG
 msg "MERGING DROIDSPACES CONFIG"
 
 ARCH=arm64 \
+KCONFIG_CONFIG=out/.config \
 scripts/kconfig/merge_config.sh \
-    -m \
     out/.config \
     ../config/droidspaces.fragment
 
