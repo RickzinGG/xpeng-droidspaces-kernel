@@ -5,7 +5,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
     - name: Checkout
@@ -16,22 +16,12 @@ jobs:
         sudo apt update
 
         sudo apt install -y \
-          git curl wget zip unzip zstd \
+          git curl wget zip unzip \
           bc bison flex \
           libssl-dev cpio kmod \
           build-essential libelf-dev \
-          python3 gcc g++
-
-    - name: Setup Neutron Clang
-      run: |
-        mkdir clang
-        cd clang
-
-        wget https://github.com/Neutron-Toolchains/clang-build-catalogue/releases/download/11032025/neutron-clang-18.0.0.tar.zst
-
-        tar --use-compress-program=unzstd -xvf neutron-clang-18.0.0.tar.zst
-
-        cd ..
+          python3 gcc g++ \
+          clang lld llvm
 
     - name: Clone Motorola Kernel
       run: |
