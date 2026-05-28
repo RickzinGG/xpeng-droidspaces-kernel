@@ -13,12 +13,6 @@ export LLVM_IAS=1
 export PATH="$(pwd)/../clang/bin:$PATH"
 
 export CC=clang
-export LD=ld.lld
-export AR=llvm-ar
-export NM=llvm-nm
-export OBJCOPY=llvm-objcopy
-export OBJDUMP=llvm-objdump
-export STRIP=llvm-strip
 
 mkdir -p out
 
@@ -36,4 +30,5 @@ make -j$(nproc --all) \
     LLVM=1 \
     LLVM_IAS=1 \
     KCFLAGS="-Wno-error" \
-    KBUILD_MODPOST_WARN=1
+    HOSTCC=gcc \
+    HOSTCXX=g++
