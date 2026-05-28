@@ -7,12 +7,10 @@ cd kernel
 export ARCH=arm64
 export SUBARCH=arm64
 
-export LLVM=1
-export LLVM_IAS=1
-
 export PATH="$(pwd)/../clang/bin:$PATH"
 
-export CC=clang
+export KBUILD_BUILD_USER=github
+export KBUILD_BUILD_HOST=actions
 
 mkdir -p out
 
@@ -29,6 +27,6 @@ make -j$(nproc --all) \
     CC=clang \
     LLVM=1 \
     LLVM_IAS=1 \
-    KCFLAGS="-Wno-error" \
     HOSTCC=gcc \
-    HOSTCXX=g++
+    HOSTCXX=g++ \
+    KCFLAGS="-Wno-error"
