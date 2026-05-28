@@ -1,55 +1,44 @@
-name: DroidSpaces Kernel CI
+name: Build DroidSpaces Kernel
 
 on:
   workflow_dispatch:
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
 
     steps:
-
     - name: Checkout
       uses: actions/checkout@v4
 
-    - name: Free Disk Space
-      run: |
-        sudo rm -rf /usr/share/dotnet
-        sudo rm -rf /opt/ghc
-        sudo docker image prune -af
-
-    - name: Install Dependencies
+    - name: Install dependencies
       run: |
         sudo apt update
 
         sudo apt install -y \
           git curl zip unzip bc bison flex \
-          build-essential \
-          libssl-dev \
-          libncurses5-dev \
-          ccache \
-          python3 \
-          python-is-python3
+          libssl-dev cpio kmod \
+          build-essential libelf-dev \
+          python3 gcc clang lld llvm
 
-    - name: Setup Ccache
-      uses: hendrikmuhs/ccache-action@v1.2
-
-    - name: Make Scripts Executable
+    - name: Clone Motorola Kernel
       run: |
-        chmod +x scripts/*.sh
+        git clone --depth=1 \
+        -b MMI-S3RXC32.33-8-25 \
+        https://github.com/MotorolaMobilityLLC/kernel-msm.git kernel
 
-    - name: Build Kernel
+    - name: Run build script
       run: |
-        bash scripts/build.sh
+        chmod +x scripts/build.sh
+        ./scripts/build.sh
 
-    - name: Create Flashable ZIP
+    - name: Run AnyKernel script
       run: |
-        bash scripts/mkzip.sh
+        chmod +x scripts/mkzip.sh
+        ./scripts/mkzip.sh
 
-    - name: Upload Artifacts
+    - name: Upload ZIP
       uses: actions/upload-artifact@v4
       with:
-        name: DroidSpaces-Kernel
-        path: |
-          *.zip
-          kernel/out/arch/arm64/boot/Image
+        name: droidspaces_kernel
+        path: droidspaces_kernel.zip
