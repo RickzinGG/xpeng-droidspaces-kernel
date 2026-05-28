@@ -13,14 +13,16 @@ git clone --depth=1 \
 msg "COPYING IMAGE"
 
 cp kernel/out/arch/arm64/boot/Image \
-   AnyKernel3/
+   AnyKernel3/Image
 
 cd AnyKernel3
 
-ZIPNAME="${KERNEL_NAME}-${DEVICE}-$(date +%Y%m%d).zip"
+rm -f README.md
+rm -f .gitignore
+rm -rf .git
 
-msg "CREATING ZIP"
+ZIPNAME="../droidspaces_kernel.zip"
 
-zip -r9 $ZIPNAME *
+msg "CREATING FLASHABLE ZIP"
 
-mv $ZIPNAME ../
+zip -r9 $ZIPNAME ./*
