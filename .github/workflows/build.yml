@@ -19,7 +19,12 @@ jobs:
           git curl zip unzip bc bison flex \
           libssl-dev cpio kmod \
           build-essential libelf-dev \
-          python3 gcc clang lld llvm
+          python3 gcc
+
+    - name: Setup Android Clang
+      run: |
+        git clone --depth=1 \
+        https://github.com/kdrag0n/proton-clang.git clang
 
     - name: Clone Motorola Kernel
       run: |
