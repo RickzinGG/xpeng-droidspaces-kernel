@@ -21,10 +21,16 @@ jobs:
           build-essential libelf-dev \
           python3 gcc g++
 
-    - name: Setup ZyC Clang
+- name: Setup ZyC Clang
       run: |
-        git clone --depth=1 \
-        https://github.com/ZyCromerZ/Clang.git clang
+        mkdir clang
+        cd clang
+
+        wget https://github.com/ZyCromerZ/Clang/releases/download/20.0.0git-20250501-release/Clang-20.0.0git-20250501.tar.gz
+
+        tar -xvf Clang-20.0.0git-20250501.tar.gz
+
+        cd ..
 
     - name: Clone Motorola Kernel
       run: |
