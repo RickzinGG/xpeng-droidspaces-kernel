@@ -22,20 +22,9 @@ export STRIP=llvm-strip
 
 mkdir -p out
 
-echo "SEARCHING DEFCONFIG"
+echo "USING GKI DEFCONFIG"
 
-DEFCONFIG=$(find arch/arm64/configs -type f | grep -Ei "vendor|gki|perf|kona|holi|sm7325" | head -n 1)
-
-if [ -z "$DEFCONFIG" ]; then
-  echo "No compatible defconfig found"
-  exit 1
-fi
-
-DEFCONFIG_NAME=$(basename $DEFCONFIG)
-
-echo "USING DEFCONFIG: $DEFCONFIG_NAME"
-
-make O=out $DEFCONFIG_NAME
+make O=out gki_defconfig
 
 cat ../config/droidspaces.fragment >> out/.config
 
