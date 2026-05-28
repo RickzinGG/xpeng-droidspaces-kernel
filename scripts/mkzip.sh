@@ -2,27 +2,43 @@
 
 set -e
 
-source config/build.env
-source scripts/functions.sh
-
-msg "CLONING ANYKERNEL3"
-
 git clone --depth=1 \
-    $ANYKERNEL_REPO AnyKernel3
+https://github.com/osm0sis/AnyKernel3.git AnyKernel3
 
-msg "COPYING IMAGE"
+IMAGE=$(find kernel/out/arch/arm64/boot -name "Image*" | head -n 1)
 
-cp kernel/out/arch/arm64/boot/Image \
-   AnyKernel3/Image
+if [ -z "$IMAGE" ]; then
+  echo "Kernel image not found"
+  exit 1
+fi
+
+cp $IMAGE AnyKernel3/Image
+
+cat > AnyKernel3/anykernel.sh << 'EOF'
+properties() { '
+kernel.string=DroidSpaces Kernel for Moto G200
+do.devicecheck=0
+do.modules=0
+do.systemless=1
+do.cleanup=1
+do.cleanuponabort=0
+supported.versions=
+supported.patchlevels=
+supported.vendorpatchlevels=
+'; }
+
+BLOCK=boot;
+IS_SLOT_DEVICE=1;
+RAMDISK_COMPRESSION=auto;
+PATCH_VBMETA_FLAG=auto;
+
+. tools/ak3-core.sh;
+
+dump_boot;
+
+write_boot;
+EOF
 
 cd AnyKernel3
 
-rm -f README.md
-rm -f .gitignore
-rm -rf .git
-
-ZIPNAME="../droidspaces_kernel.zip"
-
-msg "CREATING FLASHABLE ZIP"
-
-zip -r9 $ZIPNAME ./*
+zip -r9 ../droidspaces_kernel.zip ./*
