@@ -2,29 +2,32 @@
 
 set -e
 
-git clone --depth=1 \
-https://github.com/osm0sis/AnyKernel3.git AnyKernel3
+echo "Clonando AnyKernel3..."
 
-IMAGE=$(find kernel/out/arch/arm64/boot -name "Image*" | head -n 1)
+git clone --depth=1 https://github.com/osm0sis/AnyKernel3.git AnyKernel3
 
-if [ -z "$IMAGE" ]; then
-  echo "Kernel image not found"
-  exit 1
+echo "Copiando kernel..."
+
+# tenta usar Image.gz-dtb primeiro (preferido)
+if [ -f kernel/out/arch/arm64/boot/Image.gz-dtb ]; then
+    cp kernel/out/arch/arm64/boot/Image.gz-dtb AnyKernel3/Image
+elif [ -f kernel/out/arch/arm64/boot/Image.gz ]; then
+    cp kernel/out/arch/arm64/boot/Image.gz AnyKernel3/Image
+else
+    cp kernel/out/arch/arm64/boot/Image AnyKernel3/Image
 fi
 
-cp $IMAGE AnyKernel3/Image
+echo "Criando anykernel.sh..."
 
 cat > AnyKernel3/anykernel.sh << 'EOF'
 properties() { '
-kernel.string=DroidSpaces Kernel for Moto G200
+kernel.string=DroidSpaces Kernel (Moto G200)
 do.devicecheck=0
 do.modules=0
 do.systemless=1
 do.cleanup=1
 do.cleanuponabort=0
 supported.versions=
-supported.patchlevels=
-supported.vendorpatchlevels=
 '; }
 
 BLOCK=boot;
@@ -39,6 +42,9 @@ dump_boot;
 write_boot;
 EOF
 
-cd AnyKernel3
+echo "Gerando ZIP..."
 
+cd AnyKernel3
 zip -r9 ../droidspaces_kernel.zip ./*
+
+echo "Pronto!"
