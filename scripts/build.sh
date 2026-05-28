@@ -7,10 +7,13 @@ cd kernel
 export ARCH=arm64
 export SUBARCH=arm64
 
-export PATH="$(pwd)/../clang/bin:$PATH"
-
 export KBUILD_BUILD_USER=github
 export KBUILD_BUILD_HOST=actions
+
+export PATH="$(pwd)/../clang/bin:$PATH"
+
+export CC=clang
+export LD=ld.lld
 
 mkdir -p out
 
@@ -25,6 +28,7 @@ make O=out olddefconfig
 make -j$(nproc --all) \
     O=out \
     CC=clang \
+    LD=ld.lld \
     LLVM=1 \
     LLVM_IAS=1 \
     HOSTCC=gcc \
