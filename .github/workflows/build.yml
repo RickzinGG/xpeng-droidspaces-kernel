@@ -21,7 +21,9 @@ jobs:
           libssl-dev cpio kmod \
           build-essential libelf-dev \
           python3 gcc g++ \
-          clang lld llvm
+clang lld llvm \
+gcc-aarch64-linux-gnu \
+gcc-arm-linux-gnueabi
 
     - name: Clone Motorola Kernel
       run: |
