@@ -10,8 +10,6 @@ export SUBARCH=arm64
 export KBUILD_BUILD_USER=github
 export KBUILD_BUILD_HOST=actions
 
-export PATH="$(pwd)/../clang/bin:$PATH"
-
 export CC=clang
 export LD=ld.lld
 
