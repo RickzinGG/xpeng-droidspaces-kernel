@@ -22,16 +22,18 @@ export STRIP=llvm-strip
 
 mkdir -p out
 
-DEFCONFIG=$(find arch/arm64/configs -name "*xpeng*defconfig" | head -n 1)
+echo "SEARCHING DEFCONFIG"
+
+DEFCONFIG=$(find arch/arm64/configs -type f | grep -Ei "vendor|gki|perf|kona|holi|sm7325" | head -n 1)
 
 if [ -z "$DEFCONFIG" ]; then
-  echo "xpeng defconfig not found"
+  echo "No compatible defconfig found"
   exit 1
 fi
 
 DEFCONFIG_NAME=$(basename $DEFCONFIG)
 
-echo "Using defconfig: $DEFCONFIG_NAME"
+echo "USING DEFCONFIG: $DEFCONFIG_NAME"
 
 make O=out $DEFCONFIG_NAME
 
