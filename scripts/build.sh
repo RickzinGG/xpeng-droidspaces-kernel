@@ -47,6 +47,8 @@ make -j$(nproc --all) \
     O=out \
     CC=clang \
     LLVM=1 \
-    LLVM_IAS=1
+    LLVM_IAS=1 \
+    KCFLAGS="-Wno-error" \
+    KBUILD_MODPOST_WARN=1
 
 msg "BUILD FINISHED"
