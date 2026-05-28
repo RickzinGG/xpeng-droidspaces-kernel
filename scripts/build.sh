@@ -2,46 +2,42 @@
 
 set -e
 
-source config/build.env
-source scripts/functions.sh
-
-msg "CLONING KERNEL"
-
-git clone --depth=1 \
-    -b $KERNEL_BRANCH \
-    $KERNEL_REPO kernel
-
-msg "CLONING CLANG"
-
-git clone --depth=1 \
-    $CLANG_REPO clang
+cd kernel
 
 export ARCH=arm64
 export SUBARCH=arm64
 
-export KBUILD_BUILD_USER="github"
-export KBUILD_BUILD_HOST="actions"
+export LLVM=1
+export LLVM_IAS=1
 
-export PATH=$GITHUB_WORKSPACE/clang/bin:$PATH
+export PATH="$(pwd)/../clang/bin:$PATH"
 
-cd kernel
+export CC=clang
+export LD=ld.lld
+export AR=llvm-ar
+export NM=llvm-nm
+export OBJCOPY=llvm-objcopy
+export OBJDUMP=llvm-objdump
+export STRIP=llvm-strip
 
 mkdir -p out
 
-msg "CLEANING SOURCE"
+DEFCONFIG=$(find arch/arm64/configs -name "*xpeng*defconfig" | head -n 1)
 
-make O=out mrproper
+if [ -z "$DEFCONFIG" ]; then
+  echo "xpeng defconfig not found"
+  exit 1
+fi
 
-msg "GENERATING DEFCONFIG"
+DEFCONFIG_NAME=$(basename $DEFCONFIG)
 
-make O=out $DEFCONFIG
+echo "Using defconfig: $DEFCONFIG_NAME"
 
-msg "APPLYING DROIDSPACES CONFIG"
+make O=out $DEFCONFIG_NAME
 
 cat ../config/droidspaces.fragment >> out/.config
 
 make O=out olddefconfig
-msg "BUILDING KERNEL"
 
 make -j$(nproc --all) \
     O=out \
@@ -50,5 +46,3 @@ make -j$(nproc --all) \
     LLVM_IAS=1 \
     KCFLAGS="-Wno-error" \
     KBUILD_MODPOST_WARN=1
-
-msg "BUILD FINISHED"
