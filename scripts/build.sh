@@ -47,6 +47,7 @@ make -j$(nproc --all) \
     O=out \
     CC=clang \
     LLVM=1 \
-    LLVM_IAS=1
+    LLVM_IAS=1 \
+    CONFIG_MODULES=n
 
 msg "BUILD FINISHED"
